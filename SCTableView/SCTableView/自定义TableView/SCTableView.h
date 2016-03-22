@@ -21,16 +21,16 @@ typedef int(^SCTableViewCellChooseBlock)(NSDictionary *data);
 @property(nonatomic, assign)BOOL hasMultiSection;
 
 
-//初始化方法。
+//initialized method
 - (instancetype)initWithFrame:(CGRect)frame CellClassNames:(NSArray *)cellClassNames NeedDeselect:(BOOL)needDeselect SelectedColor:(UIColor *)selectedColor style:(UITableViewStyle)tableViewStyle;
 
-//数据加载方法。
+//load data meothd
 - (void)setInfoWihtDict:(NSDictionary *)dict;
 
-//cell选择反馈方法。
+//cell select method
 - (void)setCellResponseBlock:(SCTableViewCellResponseBlock)cellResponseBlock;
 
-//cell类型选择方法。
-//请将此方法的执行，放在数据加载方法之前（在tableView初始化行高会用到此方法）。
+//cell class choose method
+//please implement this method before you implement load data method.(thisi method will be used in 'heightForRowAtIndexPath' method)
 - (void)setCellChooseBlock:(SCTableViewCellChooseBlock)cellChooseBlock;
 @end

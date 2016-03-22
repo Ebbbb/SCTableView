@@ -11,9 +11,9 @@
 @protocol SCBaseTableCellInterFace <NSObject>
 
 @required
-//处理数据方法
+// data delivery method
 - (void)dealWithData:(NSDictionary *)dict;
-//返回cell高度方法。如果高度小于等于0，tableview将会按照自动布局方法计算行高。
+//return cell height, if the the height is less than or equal to zero, we will return UITableViewAutomaticDimension in tableview's datasource method "heightForRowAtIndexPath".
 - (CGFloat)getSubCellHeight;
 
 @end
@@ -25,4 +25,5 @@
 
 - (void)loadWithData:(NSDictionary *)dict;
 - (CGFloat)getCellHeight;
+
 @end

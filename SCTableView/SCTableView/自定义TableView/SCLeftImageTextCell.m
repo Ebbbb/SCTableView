@@ -15,11 +15,6 @@
     if ([dict objectForKey:@"title"] && [dict[@"title"] isKindOfClass:[NSString class]]) {
         self.Name.text = dict[@"title"];
     }
-    if ([dict objectForKey:@"icon"] && [dict[@"icon"] isKindOfClass:[NSString class]]) {
-        if (![dict[@"icon"] hasPrefix:@"http"]) {
-            self.Icon.image = [UIImage imageNamed:dict[@"iconUrl"]];
-        }
-    }
 }
 
 - (CGFloat)getSubCellHeight {
