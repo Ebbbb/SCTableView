@@ -6,3 +6,5 @@
   just a e-mail address: 894054389@qq.com.
 ####Usage
   download a copy of code, then you will see.
+#####Version History
+  - March 2016: version 1.0
