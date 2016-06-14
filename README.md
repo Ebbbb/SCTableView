@@ -6,5 +6,5 @@
   The TableView's usage is simple, one method for initialization, one method for cell choice(this method must use before datasource method), one method for cell response, one method for datasource and section header and section footer, one method for cell edit.if you you are gonging to create UITableViewCell, youneed to import the category "UITableViewCell+BaseConfiguration.h" of UITableViewCell and confirm the interface "SCBaseTableCellInterFace", then immplement relate method. As for the details, download a copy of code, you will see.
 #####Version History
   - March   2016: version 1.0
-  - June    2015: version 1.1 (The design pattern for UITableViewCell's usage change form generalization to composition)
+  - June    2016: version 1.1 (The design pattern for UITableViewCell's usage change form generalization to composition)
   
