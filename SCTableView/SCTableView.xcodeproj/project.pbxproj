@@ -15,10 +15,10 @@
 		96A2996D1CA01B8100C23B77 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 96A2996B1CA01B8100C23B77 /* LaunchScreen.storyboard */; };
 		96A299781CA01B8100C23B77 /* SCTableViewTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 96A299771CA01B8100C23B77 /* SCTableViewTests.m */; };
 		96A299831CA01B8100C23B77 /* SCTableViewUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 96A299821CA01B8100C23B77 /* SCTableViewUITests.m */; };
-		96A2999B1CA0E2D100C23B77 /* SCBaseTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 96A299921CA0E2D100C23B77 /* SCBaseTableCell.m */; };
 		96A2999C1CA0E2D100C23B77 /* SCLeftImageTextCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 96A299941CA0E2D100C23B77 /* SCLeftImageTextCell.m */; };
 		96A2999D1CA0E2D100C23B77 /* SCLeftImageTextCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 96A299951CA0E2D100C23B77 /* SCLeftImageTextCell.xib */; };
 		96A299A01CA0E2D100C23B77 /* SCTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 96A2999A1CA0E2D100C23B77 /* SCTableView.m */; };
+		96CD0BFE1D0FDA1F00CABDA6 /* UITableViewCell+BaseConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 96CD0BFD1D0FDA1F00CABDA6 /* UITableViewCell+BaseConfiguration.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,13 +55,13 @@
 		96A2997E1CA01B8100C23B77 /* SCTableViewUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SCTableViewUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		96A299821CA01B8100C23B77 /* SCTableViewUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SCTableViewUITests.m; sourceTree = "<group>"; };
 		96A299841CA01B8100C23B77 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		96A299911CA0E2D100C23B77 /* SCBaseTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCBaseTableCell.h; sourceTree = "<group>"; };
-		96A299921CA0E2D100C23B77 /* SCBaseTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCBaseTableCell.m; sourceTree = "<group>"; };
 		96A299931CA0E2D100C23B77 /* SCLeftImageTextCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCLeftImageTextCell.h; sourceTree = "<group>"; };
 		96A299941CA0E2D100C23B77 /* SCLeftImageTextCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCLeftImageTextCell.m; sourceTree = "<group>"; };
 		96A299951CA0E2D100C23B77 /* SCLeftImageTextCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SCLeftImageTextCell.xib; sourceTree = "<group>"; };
 		96A299991CA0E2D100C23B77 /* SCTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCTableView.h; sourceTree = "<group>"; };
 		96A2999A1CA0E2D100C23B77 /* SCTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCTableView.m; sourceTree = "<group>"; };
+		96CD0BFC1D0FDA1F00CABDA6 /* UITableViewCell+BaseConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UITableViewCell+BaseConfiguration.h"; sourceTree = "<group>"; };
+		96CD0BFD1D0FDA1F00CABDA6 /* UITableViewCell+BaseConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UITableViewCell+BaseConfiguration.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -155,13 +155,13 @@
 		96A299901CA0E2D100C23B77 /* 自定义TableView */ = {
 			isa = PBXGroup;
 			children = (
-				96A299911CA0E2D100C23B77 /* SCBaseTableCell.h */,
-				96A299921CA0E2D100C23B77 /* SCBaseTableCell.m */,
 				96A299931CA0E2D100C23B77 /* SCLeftImageTextCell.h */,
 				96A299941CA0E2D100C23B77 /* SCLeftImageTextCell.m */,
 				96A299951CA0E2D100C23B77 /* SCLeftImageTextCell.xib */,
 				96A299991CA0E2D100C23B77 /* SCTableView.h */,
 				96A2999A1CA0E2D100C23B77 /* SCTableView.m */,
+				96CD0BFC1D0FDA1F00CABDA6 /* UITableViewCell+BaseConfiguration.h */,
+				96CD0BFD1D0FDA1F00CABDA6 /* UITableViewCell+BaseConfiguration.m */,
 			);
 			path = "自定义TableView";
 			sourceTree = "<group>";
@@ -233,6 +233,7 @@
 				TargetAttributes = {
 					96A299591CA01B8100C23B77 = {
 						CreatedOnToolsVersion = 7.2;
+						DevelopmentTeam = TD57QV6KLF;
 					};
 					96A299721CA01B8100C23B77 = {
 						CreatedOnToolsVersion = 7.2;
@@ -298,9 +299,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				96A299651CA01B8100C23B77 /* ViewController.m in Sources */,
-				96A2999B1CA0E2D100C23B77 /* SCBaseTableCell.m in Sources */,
 				96A299621CA01B8100C23B77 /* AppDelegate.m in Sources */,
 				96A2999C1CA0E2D100C23B77 /* SCLeftImageTextCell.m in Sources */,
+				96CD0BFE1D0FDA1F00CABDA6 /* UITableViewCell+BaseConfiguration.m in Sources */,
 				96A2995F1CA01B8100C23B77 /* main.m in Sources */,
 				96A299A01CA0E2D100C23B77 /* SCTableView.m in Sources */,
 			);
@@ -443,10 +444,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = SCTableView/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.sobeycloud.SCTableView;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sobeycloud.tablevv;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
@@ -454,10 +458,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = SCTableView/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.sobeycloud.SCTableView;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sobeycloud.tablevv;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};

@@ -7,9 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "SCBaseTableCell.h"
+#import "UITableViewCell+BaseConfiguration.h"
 
-@interface SCLeftImageTextCell : SCBaseTableCell<SCBaseTableCellInterFace>
+@interface SCLeftImageTextCell : UITableViewCell<SCBaseTableCellInterFace>
 @property (weak, nonatomic) IBOutlet UIImageView *Icon;
 @property (weak, nonatomic) IBOutlet UILabel *Name;
 

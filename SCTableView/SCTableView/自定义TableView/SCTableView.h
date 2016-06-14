@@ -12,25 +12,27 @@
 #define SectionHeader @"SectionHeader"
 #define SectionFooter @"SectionFooter"
 
-typedef void(^SCTableViewCellResponseBlock)(NSDictionary *data,NSInteger section,NSInteger row);
+typedef void(^SCTableViewCellResponseBlock)(NSDictionary *data,NSIndexPath *indexPath);
 
-typedef int(^SCTableViewCellChooseBlock)(NSDictionary *data);
+typedef int(^SCTableViewCellChooseBlock)(NSDictionary *data, NSIndexPath *indexPath);
+typedef void(^SCTableViewDidEditCallBackBlock)(NSArray *myDataSource);
 
 @interface SCTableView : UITableView
 
 @property(nonatomic, assign)BOOL hasMultiSection;
 
-
-//initialized method
+//初始化方法。
 - (instancetype)initWithFrame:(CGRect)frame CellClassNames:(NSArray *)cellClassNames NeedDeselect:(BOOL)needDeselect SelectedColor:(UIColor *)selectedColor style:(UITableViewStyle)tableViewStyle;
 
-//load data meothd
+//数据加载方法。
 - (void)setInfoWihtDict:(NSDictionary *)dict;
 
-//cell select method
+//cell选择反馈方法。
 - (void)setCellResponseBlock:(SCTableViewCellResponseBlock)cellResponseBlock;
 
-//cell class choose method
-//please implement this method before you implement load data method.(thisi method will be used in 'heightForRowAtIndexPath' method)
+//cell类型选择方法。
+//请将此方法的执行，放在数据加载方法之前（在tableView初始化行高会用到此方法）。
 - (void)setCellChooseBlock:(SCTableViewCellChooseBlock)cellChooseBlock;
+//编辑数据反馈方法
+- (void)setDidEditCallBackBlock:(SCTableViewDidEditCallBackBlock)editCallBack;
 @end

@@ -7,8 +7,7 @@
 //
 
 #import "SCTableView.h"
-#import "SCBaseTableCell.h"
-
+#import "UITableViewCell+BaseConfiguration.h"
 @interface SCTableView ()<UITableViewDataSource,UITableViewDelegate>
 
 @property(nonatomic, strong)NSArray *cellIdentifiers;
@@ -21,7 +20,7 @@
 
 @property(nonatomic, copy)SCTableViewCellResponseBlock cellResponseBlock;
 @property(nonatomic, copy)SCTableViewCellChooseBlock cellChooseBlock;
-
+@property(nonatomic, copy)SCTableViewDidEditCallBackBlock editCallBack;
 @end
 
 @implementation SCTableView
@@ -36,14 +35,15 @@
         _cellIdentifiers = cellClassNames;
         for (int i = 0; i < cellClassNames.count ; i++) {
             NSString *cellClassName = cellClassNames[i];
-            if (NSClassFromString(cellClassName) && [NSClassFromString(cellClassName) isSubclassOfClass:[SCBaseTableCell class]]) {
+            Class cellClass = NSClassFromString(cellClassName);
+            if (cellClass && [[[cellClass alloc] init] conformsToProtocol:@protocol(SCBaseTableCellInterFace)]) {
                 
                 if ([[NSBundle mainBundle] pathForResource:_cellIdentifiers[i] ofType:@"nib"]) {
                     [self registerNib:[UINib nibWithNibName:cellClassName bundle:[NSBundle mainBundle]] forCellReuseIdentifier:cellClassName];
                     
                 }
                 else {
-                    [self registerClass:NSClassFromString(cellClassName) forCellReuseIdentifier:cellClassName];
+                    [self registerClass:cellClass forCellReuseIdentifier:cellClassName];
                 }
             }
             else {
@@ -104,6 +104,10 @@
     _cellChooseBlock = cellChooseBlock;
 }
 
+- (void)setDidEditCallBackBlock:(SCTableViewDidEditCallBackBlock)editCallBack {
+    _editCallBack = editCallBack;
+}
+
 #pragma mark - UITableViewMethod
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     if (_myDataSource) {
@@ -121,10 +125,14 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell;
-    cell = [tableView dequeueReusableCellWithIdentifier:_cellIdentifiers[_cellChooseBlock(_myDataSource[indexPath.section][indexPath.row])]];
-    SCBaseTableCell *newCell = (SCBaseTableCell *)cell;
-    newCell.selectedColor = _selectedColor;
-    [newCell loadWithData:_myDataSource[indexPath.section][indexPath.row]];
+    
+    cell = [tableView dequeueReusableCellWithIdentifier:_cellIdentifiers[_cellChooseBlock(_myDataSource[indexPath.section][indexPath.row], indexPath)]];
+    if ([_cellIdentifiers[_cellChooseBlock(_myDataSource[indexPath.section][indexPath.row], indexPath)] isEqualToString:@"SCTableRelateVideoCell"]) {
+        NSLog(@"%@",cell.child);
+    }
+    cell.selectedColor = _selectedColor;
+    cell.indexPath = indexPath;
+    [cell.child dealWithData:_myDataSource[indexPath.section][indexPath.row]];
     return cell;
 }
 
@@ -133,14 +141,15 @@
         [tableView deselectRowAtIndexPath:indexPath animated:YES];
     }
     if (_cellResponseBlock) {
-        _cellResponseBlock(_myDataSource[indexPath.section][indexPath.row], indexPath.section,indexPath.row);
+        _cellResponseBlock(_myDataSource[indexPath.section][indexPath.row], indexPath);
     }
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    SCBaseTableCell *tempCell = _tempCells[_cellChooseBlock(_myDataSource[indexPath.section][indexPath.row])];
-    if ([tempCell getCellHeight] > 0) {
-        return [tempCell getCellHeight];
+    UITableViewCell *tempCell = _tempCells[_cellChooseBlock(_myDataSource[indexPath.section][indexPath.row], indexPath)];
+    [tempCell.child dealWithData:_myDataSource[indexPath.section][indexPath.row]];
+    if ([tempCell.child respondsToSelector:@selector(getSubCellHeight)] && [tempCell.child getSubCellHeight] > 0) {
+        return [tempCell.child getSubCellHeight];
     }
     else {
         return UITableViewAutomaticDimension;
@@ -183,6 +192,56 @@
         return view.frame.size.height;
     }
     return 0;
+}
+
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
+    return self.editing;
+}
+
+- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
+    return self.editing;
+}
+
+- (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (self.editing) {
+        return UITableViewCellEditingStyleDelete;
+    }else{
+        return UITableViewCellEditingStyleInsert;
+    }
+}
+
+- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath {
+    if ([_myDataSource[sourceIndexPath.section] isKindOfClass:[NSMutableArray class]] && [_myDataSource[destinationIndexPath.section] isKindOfClass:[NSMutableArray class]]) {
+        
+        NSMutableArray *sourceArray = (NSMutableArray *)_myDataSource[sourceIndexPath.section];
+        NSMutableArray *destinationArray = (NSMutableArray *)_myDataSource[destinationIndexPath.section];
+        if (sourceIndexPath.section == destinationIndexPath.section) {
+            [sourceArray exchangeObjectAtIndex:sourceIndexPath.row withObjectAtIndex:destinationIndexPath.row];
+        }
+        else {
+            [destinationArray insertObject:sourceArray[sourceIndexPath.row] atIndex:destinationIndexPath.row];
+            [sourceArray removeObjectAtIndex:sourceIndexPath.row];
+        }
+        if (_editCallBack){
+            _editCallBack(_myDataSource);
+        }
+    }
+}
+
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
+    if ([_myDataSource[indexPath.section] isKindOfClass:[NSMutableArray class]]) {
+         NSMutableArray *array = (NSMutableArray *)_myDataSource[indexPath.section];
+        if (editingStyle == UITableViewCellEditingStyleDelete) {
+            [array removeObjectAtIndex:indexPath.row];
+            [self deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+            [self reloadData];
+        }
+        if (_editCallBack){
+            _editCallBack(_myDataSource);
+        }
+        
+    }
 }
 
 

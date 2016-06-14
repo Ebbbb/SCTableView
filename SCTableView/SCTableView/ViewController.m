@@ -32,12 +32,12 @@
     }
     
     SCTableView *tableView = [[SCTableView alloc] initWithFrame:CGRectMake(0, 20, self.view.frame.size.width, self.view.frame.size.height - 20) CellClassNames:@[@"SCLeftImageTextCell"] NeedDeselect:NO SelectedColor:[UIColor cyanColor] style:UITableViewStylePlain];
-    [tableView setCellChooseBlock:^int(NSDictionary *data) {
+    [tableView setCellChooseBlock:^int(NSDictionary *data, NSIndexPath *indexPath) {
         return 0;
     }];
     [tableView setInfoWihtDict:@{DataSource:dataSource,SectionHeader:headers,SectionFooter:footers}];
-    [tableView setCellResponseBlock:^(NSDictionary *data, NSInteger section, NSInteger row) {
-        NSLog(@"section %ld %@ %ld.",section,[data objectForKey:@"title"],row);
+    [tableView setCellResponseBlock:^(NSDictionary *data, NSIndexPath *indexPath) {
+        NSLog(@"section %ld %@ %ld.",indexPath.section,[data objectForKey:@"title"],indexPath.row);
     }];
     [self.view addSubview:tableView];
     // Do any additional setup after loading the view, typically from a nib.
