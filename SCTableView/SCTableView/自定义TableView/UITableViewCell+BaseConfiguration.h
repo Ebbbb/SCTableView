@@ -21,6 +21,6 @@
 
 @interface UITableViewCell (BaseConfiguration)
 @property(nonatomic, strong)UIColor *selectedColor;
-@property(nonatomic, weak)id<SCBaseTableCellInterFace> child;
+@property(nonatomic, weak)UITableViewCell<SCBaseTableCellInterFace> *child;
 @property(nonatomic, weak)NSIndexPath * indexPath;
 @end
