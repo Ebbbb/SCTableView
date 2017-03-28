@@ -12,5 +12,4 @@
 @interface SCLeftImageTextCell : UITableViewCell<SCBaseTableCellInterFace>
 @property (weak, nonatomic) IBOutlet UIImageView *Icon;
 @property (weak, nonatomic) IBOutlet UILabel *Name;
-
 @end

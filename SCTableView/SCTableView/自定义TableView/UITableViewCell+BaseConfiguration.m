@@ -11,8 +11,41 @@
 
 static void *selectedColorKey = &selectedColorKey;
 static void *childKey = &childKey;
-static void *indexPathKey = &indexPathKey;
 @implementation UITableViewCell (BaseConfiguration)
+
+#pragma mark - 拦截系统方法进行初始化设置
++ (void)load {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        Class class = [self class];
+        //When swizzling a class method, use the following:
+        //Class class = object_getClass((id)self);
+        
+        NSArray *originalArray = @[@"layoutSubviews"];
+        NSArray *swizzledArray = @[@"sc_layoutSubviews"];
+        for (int i = 0; i < originalArray.count; i++) {
+            SEL originalSelector = NSSelectorFromString(originalArray[i]);
+            SEL swizzledSelector = NSSelectorFromString(swizzledArray[i]);
+            Method originalMethod = class_getInstanceMethod(class, originalSelector);
+            Method swizzledMethod = class_getInstanceMethod(class, swizzledSelector);
+            BOOL didAddMethod = class_addMethod(class, originalSelector, method_getImplementation(swizzledMethod), method_getTypeEncoding(swizzledMethod));
+            if (didAddMethod) {
+                class_replaceMethod(class, swizzledSelector, method_getImplementation(originalMethod), method_getTypeEncoding(originalMethod));
+            }
+            else {
+                method_exchangeImplementations(originalMethod, swizzledMethod);
+            }
+        }
+    });
+}
+
+- (void)sc_layoutSubviews {
+    if (self.selectedColor) {
+        self.selectedBackgroundView = [[UIView alloc] initWithFrame:self.frame];
+        self.selectedBackgroundView.backgroundColor = self.selectedColor;
+    }
+    [self sc_layoutSubviews];
+}
 
 - (void)setChild:(UITableViewCell<SCBaseTableCellInterFace> *)child {
 }
@@ -31,15 +64,6 @@ static void *indexPathKey = &indexPathKey;
 
 - (UIColor *)selectedColor {
     return objc_getAssociatedObject(self, selectedColorKey);
-}
-- (void)setIndexPath:(NSIndexPath *)indexPath
-{
-    objc_setAssociatedObject(self, indexPathKey, indexPath, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-}
-
-- (NSIndexPath *)indexPath
-{
-     return objc_getAssociatedObject(self, indexPathKey);
 }
 
 @end

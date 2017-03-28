@@ -7,54 +7,34 @@
 //
 
 #import "SCTableView.h"
-#import "UITableViewCell+BaseConfiguration.h"
+
+NSString * const SCTableViewDataSource = @"SCTableViewDataSource";
+NSString * const SCTableViewSectionHeader = @"SCTableViewSectionHeader";
+NSString * const SCTableViewSectionFooter = @"SCTableViewSectionFooter";
+
 @interface SCTableView ()<UITableViewDataSource,UITableViewDelegate>
 
-@property(nonatomic, strong)NSArray *cellIdentifiers;
-@property(nonatomic, strong)NSMutableArray *tempCells;
+@property(nonatomic, strong)NSMutableDictionary *tempCellDic;
 @property(nonatomic, assign)BOOL needDeselect;
 @property(nonatomic, strong)UIColor *selectedColor;
 @property(nonatomic, strong)NSArray *myDataSource;
 @property(nonatomic, strong)NSArray *sectionHeader;
 @property(nonatomic, strong)NSArray *sectionFooter;
-
 @property(nonatomic, copy)SCTableViewCellResponseBlock cellResponseBlock;
 @property(nonatomic, copy)SCTableViewCellChooseBlock cellChooseBlock;
 @property(nonatomic, copy)SCTableViewDidEditCallBackBlock editCallBack;
+
 @end
 
 @implementation SCTableView
 
-- (instancetype)initWithFrame:(CGRect)frame CellClassNames:(NSArray *)cellClassNames NeedDeselect:(BOOL)needDeselect SelectedColor:(UIColor *)selectedColor style:(UITableViewStyle)tableViewStyle {
+- (instancetype)initWithFrame:(CGRect)frame NeedDeselect:(BOOL)needDeselect SelectedColor:(UIColor *)selectedColor style:(UITableViewStyle)tableViewStyle {
     self = [super initWithFrame:frame style:tableViewStyle];
     if (self) {
         self.delegate = self;
         self.dataSource = self;
         self.estimatedRowHeight = 44;
         self.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
-        _cellIdentifiers = cellClassNames;
-        for (int i = 0; i < cellClassNames.count ; i++) {
-            NSString *cellClassName = cellClassNames[i];
-            Class cellClass = NSClassFromString(cellClassName);
-            if (cellClass && [[[cellClass alloc] init] conformsToProtocol:@protocol(SCBaseTableCellInterFace)]) {
-                
-                if ([[NSBundle mainBundle] pathForResource:_cellIdentifiers[i] ofType:@"nib"]) {
-                    [self registerNib:[UINib nibWithNibName:cellClassName bundle:[NSBundle mainBundle]] forCellReuseIdentifier:cellClassName];
-                    
-                }
-                else {
-                    [self registerClass:cellClass forCellReuseIdentifier:cellClassName];
-                }
-            }
-            else {
-                _cellIdentifiers = nil;
-                break;
-            }
-        }
-        _tempCells = [NSMutableArray array];
-        for (int i = 0; i < _cellIdentifiers.count; i++) {
-            [_tempCells addObject:[self dequeueReusableCellWithIdentifier:_cellIdentifiers[i]]];
-        }
         _needDeselect = needDeselect;
         _selectedColor = selectedColor;
     }
@@ -65,33 +45,46 @@
 {
     [super setFrame:frame];
 }
+
 - (void)setInfoWihtDict:(NSDictionary *)dict {
-    if ([dict objectForKey:DataSource] && [dict[DataSource] isKindOfClass:[NSArray class]] && [dict[DataSource] count] != 0) {
-        if ([dict[DataSource][0] isKindOfClass:[NSArray class]]) {
-            _myDataSource = dict[DataSource];
+    if ([dict objectForKey:SCTableViewDataSource]) {
+        if ([dict[SCTableViewDataSource] isKindOfClass:[NSArray class]]) {
+            if ([dict[SCTableViewDataSource] count] > 0) {
+                if ([dict[SCTableViewDataSource][0] isKindOfClass:[NSArray class]] || [dict[SCTableViewDataSource][0] isKindOfClass:[NSMutableArray class]]) {
+                    _myDataSource = dict[SCTableViewDataSource];
+                }
+                else {
+                    _myDataSource = [NSArray arrayWithObject:dict[SCTableViewDataSource]];
+                }
+            }else{
+                _myDataSource = dict[SCTableViewDataSource];
+            }
         }
         else {
-            _myDataSource = [NSArray arrayWithObject:dict[DataSource]];
+            NSAssert(0, @"SCTableview datasource is not an array!");
         }
     }
-    else {
-        _myDataSource = nil;
+    
+    
+    if ([dict objectForKey:SCTableViewSectionFooter]) {
+        if ([dict[SCTableViewSectionFooter] isKindOfClass:[NSArray class]]) {
+            _sectionFooter = dict[SCTableViewSectionFooter];
+        }
+        else {
+            NSAssert(0, @"SCTableview sectionfooter is not an array!");
+        }
     }
     
     
-    if ([dict objectForKey:SectionFooter] && [dict[SectionFooter] isKindOfClass:[NSArray class]]) {
-        _sectionFooter = dict[SectionFooter];
-    }
-    else {
-        _sectionFooter = nil;
+    if ([dict objectForKey:SCTableViewSectionHeader]) {
+        if ([dict[SCTableViewSectionHeader] isKindOfClass:[NSArray class]]) {
+            _sectionHeader = dict[SCTableViewSectionHeader];
+        }
+        else {
+            NSAssert(0, @"SCTableview sectionheader is not an array!");
+        }
     }
     
-    if ([dict objectForKey:SectionHeader] && [dict[SectionHeader] isKindOfClass:[NSArray class]]) {
-        _sectionHeader = dict[SectionHeader];
-    }
-    else {
-        _sectionHeader = nil;
-    }
     
     [self reloadData];
 }
@@ -102,6 +95,30 @@
 
 - (void)setCellChooseBlock:(SCTableViewCellChooseBlock)cellChooseBlock {
     _cellChooseBlock = cellChooseBlock;
+}
+
+- (NSString *)getCellNameWithData:(NSDictionary *)data AndIndexPath:(NSIndexPath *)indexPath {
+    if (!_tempCellDic) {
+        _tempCellDic = [NSMutableDictionary dictionary];
+    }
+    NSString *cellClassName = _cellChooseBlock(_myDataSource[indexPath.section][indexPath.row], indexPath);
+    if (![_tempCellDic objectForKey:_cellChooseBlock(_myDataSource[indexPath.section][indexPath.row], indexPath)]) {
+        Class cellClass = NSClassFromString(cellClassName);
+        if (cellClass && [[[cellClass alloc] init] conformsToProtocol:@protocol(SCBaseTableCellInterFace)]) {
+            if ([[NSBundle mainBundle] pathForResource:cellClassName ofType:@"nib"]) {
+                [self registerNib:[UINib nibWithNibName:cellClassName bundle:[NSBundle mainBundle]] forCellReuseIdentifier:cellClassName];
+                
+            }
+            else {
+                [self registerClass:cellClass forCellReuseIdentifier:cellClassName];
+            }
+        }
+        else {
+            NSAssert(0, @"Cell (%@) is not existent!",cellClassName);
+        }
+        _tempCellDic[cellClassName] = [self dequeueReusableCellWithIdentifier:cellClassName];
+    }
+    return cellClassName;
 }
 
 - (void)setDidEditCallBackBlock:(SCTableViewDidEditCallBackBlock)editCallBack {
@@ -117,7 +134,7 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    if (_myDataSource && _cellIdentifiers.count > 0 && section < _myDataSource.count) {
+    if (_myDataSource && section < _myDataSource.count) {
         return [_myDataSource[section] count];
     }
     return 0;
@@ -125,13 +142,8 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell;
-    
-    cell = [tableView dequeueReusableCellWithIdentifier:_cellIdentifiers[_cellChooseBlock(_myDataSource[indexPath.section][indexPath.row], indexPath)]];
-    if ([_cellIdentifiers[_cellChooseBlock(_myDataSource[indexPath.section][indexPath.row], indexPath)] isEqualToString:@"SCTableRelateVideoCell"]) {
-        NSLog(@"%@",cell.child);
-    }
+    cell = [tableView dequeueReusableCellWithIdentifier:[self getCellNameWithData:_myDataSource[indexPath.section][indexPath.row] AndIndexPath:indexPath]];
     cell.selectedColor = _selectedColor;
-    cell.indexPath = indexPath;
     [cell.child dealWithData:_myDataSource[indexPath.section][indexPath.row]];
     return cell;
 }
@@ -146,7 +158,7 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *tempCell = _tempCells[_cellChooseBlock(_myDataSource[indexPath.section][indexPath.row], indexPath)];
+    UITableViewCell *tempCell = _tempCellDic[[self getCellNameWithData:_myDataSource[indexPath.section][indexPath.row] AndIndexPath:indexPath]];
     [tempCell.child dealWithData:_myDataSource[indexPath.section][indexPath.row]];
     if ([tempCell.child respondsToSelector:@selector(getSubCellHeight)] && [tempCell.child getSubCellHeight] > 0) {
         return [tempCell.child getSubCellHeight];
@@ -167,7 +179,8 @@
     if (_sectionFooter && section < _sectionFooter.count && ([_sectionFooter[section] isKindOfClass:[UIView class]])) {
         return _sectionFooter[section];
     }
-    return nil;
+    UIView * footer = [[UIView alloc]init];
+    return footer;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView estimatedHeightForHeaderInSection:(NSInteger)section {
@@ -179,7 +192,7 @@
         UIView *view = _sectionHeader[section];
         return view.frame.size.height;
     }
-    return 0;
+    return 0.000000001;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView estimatedHeightForFooterInSection:(NSInteger)section {
@@ -191,7 +204,7 @@
         UIView *view = _sectionFooter[section];
         return view.frame.size.height;
     }
-    return 0;
+    return 0.00000001;
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -205,7 +218,7 @@
 - (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (self.editing) {
-        return UITableViewCellEditingStyleDelete;
+        return UITableViewCellEditingStyleDelete|UITableViewCellEditingStyleInsert;
     }else{
         return UITableViewCellEditingStyleInsert;
     }
@@ -240,10 +253,6 @@
         if (_editCallBack){
             _editCallBack(_myDataSource);
         }
-        
     }
 }
-
-
-
 @end

@@ -7,22 +7,21 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "UITableViewCell+BaseConfiguration.h"
 //tableView配置项。
-#define DataSource @"DataSource"
-#define SectionHeader @"SectionHeader"
-#define SectionFooter @"SectionFooter"
+extern NSString * const SCTableViewDataSource;
+extern NSString * const SCTableViewSectionHeader;
+extern NSString * const SCTableViewSectionFooter;
 
 typedef void(^SCTableViewCellResponseBlock)(NSDictionary *data,NSIndexPath *indexPath);
-
-typedef int(^SCTableViewCellChooseBlock)(NSDictionary *data, NSIndexPath *indexPath);
+typedef NSString*(^SCTableViewCellChooseBlock)(NSDictionary *data, NSIndexPath *indexPath);
 typedef void(^SCTableViewDidEditCallBackBlock)(NSArray *myDataSource);
-
 @interface SCTableView : UITableView
 
 @property(nonatomic, assign)BOOL hasMultiSection;
 
 //初始化方法。
-- (instancetype)initWithFrame:(CGRect)frame CellClassNames:(NSArray *)cellClassNames NeedDeselect:(BOOL)needDeselect SelectedColor:(UIColor *)selectedColor style:(UITableViewStyle)tableViewStyle;
+- (instancetype)initWithFrame:(CGRect)frame NeedDeselect:(BOOL)needDeselect SelectedColor:(UIColor *)selectedColor style:(UITableViewStyle)tableViewStyle;
 
 //数据加载方法。
 - (void)setInfoWihtDict:(NSDictionary *)dict;
