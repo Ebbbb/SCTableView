@@ -218,7 +218,7 @@ NSString * const SCTableViewSectionFooter = @"SCTableViewSectionFooter";
 - (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (self.editing) {
-        return UITableViewCellEditingStyleDelete|UITableViewCellEditingStyleInsert;
+        return UITableViewCellEditingStyleDelete;
     }else{
         return UITableViewCellEditingStyleInsert;
     }
