@@ -7,4 +7,5 @@
 #####Version History
   - March   2016: version 1.0
   - June    2016: version 1.1 (The design pattern for UITableViewCell's usage change form generalization to composition)
+  - March   2017: version 1.1 (Alter cell register method. Register cell when you use, not in initialization.)
   
